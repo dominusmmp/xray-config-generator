@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>XRay Config</title>
+    <link href="./assets/css/index.css" rel="stylesheet" />
+    <style>
+      .scrollhide::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+  </head>
+  <body class="bg-stone-200">
+    <header>
+      <section class="flex justify-center items-center py-8">
+        <h1 class="text-3xl font-semibold text-slate-700">XRay (with Bridge) Config Generator</h1>
+      </section>
+    </header>
+    <main class="p-2">
+      <!-- Settings Form -->
+      <section class="container">
+        <div class="flex justify-center mb-8">
+          <form name="config" id="config" method="post" class="w-full max-w-lg flex flex-col text-stone-700">
+            <div class="grid grid-cols-2 gap-x-3 mb-3">
+              <input type="text" name="username" id="username" placeholder="Admin Username" class="bg-stone-200 py-2 px-3 rounded-lg outline-none shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]" />
+              <input type="text" name="password" id="password" placeholder="Admin Password" class="bg-stone-200 py-2 px-3 rounded-lg outline-none shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]" />
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-3">
+              <input type="number" min="10000" max="65530" name="port" id="port" placeholder="Panel Port (10000-65530)" class="bg-stone-200 py-2 px-3 rounded-lg outline-none shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]" />
+              <input type="text" name="path" id="path" placeholder="Panel Path (e.g: hiya)" class="bg-stone-200 py-2 px-3 rounded-lg outline-none shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]" />
+            </div>
+            <div class="grid grid-cols-2 gap-3 mb-3">
+              <input type="text" name="master" id="master" placeholder="Main Username" class="bg-stone-200 py-2 px-3 rounded-lg outline-none shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]" />
+              <input type="number" name="users" id="users" placeholder="Number of Users" class="bg-stone-200 py-2 px-3 rounded-lg outline-none shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-6">
+              <input type="text" name="ip" id="ip" placeholder="XRay Server IP" class="bg-stone-200 py-2 px-3 rounded-lg outline-none shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]" />
+              <select name="server" id="server" class="bg-stone-200 py-2 px-3 rounded-lg outline-none shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]">
+                <option value="caddy">Bridge: Caddy</option>
+                <option value="nginx">Bridge: NGINX</option>
+              </select>
+            </div>
+
+            <button type="submit" class="w-full py-3 px-6 border border-stone-300 bg-stone-200 rounded-lg shadow-[3px_3px_7px_0_rgba(0,0,0,0.2),-4px_-4px_9px_0_rgba(255,255,255,0.7)] active:shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]">Generate</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Configs -->
+      <section class="container">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8 md:gap-y-0 md:gap-x-10">
+          <!-- XRay Config -->
+          <div class="flex flex-col items-center">
+            <div class="text-xl font-semibold text-stone-500 px-6 mb-6">XRay Config</div>
+            <div class="w-full flex justify-center relative">
+              <pre class="w-full flex p-6 md:p-8 rounded-3xl shadow-[inset_6px_6px_14px_0_rgba(0,0,0,0.2),inset_-8px_-8px_18px_0_rgba(255,255,255,0.7)] overflow-hidden">
+                <code id="xray" class="w-full h-40 md:h-96 flex text-xs text-slate-600 font-mono overflow-scroll scrollhide scroll-smooth"></code>
+              </pre>
+              <button id="xrayCopy" class="absolute top-6 right-6 bg-stone-200 text-slate-600 border border-stone-300 py-2 px-4 rounded-lg shadow-[3px_3px_7px_0_rgba(0,0,0,0.2),-4px_-4px_9px_0_rgba(255,255,255,0.7)] active:shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]">Copy</button>
+            </div>
+          </div>
+
+          <!-- Bridge Config -->
+          <div class="flex flex-col items-center">
+            <div class="text-xl font-semibold text-stone-500 px-6 mb-6">Bridge Config</div>
+            <div class="w-full flex justify-center relative">
+              <pre class="w-full flex rounded-3xl p-6 md:p-8 shadow-[inset_6px_6px_14px_0_rgba(0,0,0,0.2),inset_-8px_-8px_18px_0_rgba(255,255,255,0.7)] overflow-hidden">
+                <code id="bridge" class="w-full h-40 md:h-96 flex text-xs text-slate-600 font-mono overflow-scroll scrollhide scroll-smooth"></code>
+              </pre>
+              <button id="bridgeCopy" class="absolute top-6 right-6 bg-stone-200 text-slate-600 border border-stone-300 py-2 px-4 rounded-lg shadow-[3px_3px_7px_0_rgba(0,0,0,0.2),-4px_-4px_9px_0_rgba(255,255,255,0.7)] active:shadow-[inset_3px_3px_7px_0_rgba(0,0,0,0.2),inset_-4px_-4px_9px_0_rgba(255,255,255,0.7)]">Copy</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer></footer>
+    <script src="./assets/js/index.js" type="module"></script>
+  </body>
+</html>
